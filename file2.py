@@ -90,7 +90,7 @@ def Alien(size: float, center: list, direct: int):
     pygame.draw.circle(screen, (0, 0, 0),
                        (center[0] - int(13 * size) * direct, center[1] - int(95 * size)), int(12 * size))
     pygame.draw.circle(screen, (255, 255, 255),
-                       (center[0] + int(26 * size) * direct, center[1] - int(92 * size)), int(2 * size))
+                       (center[0] + int(26 * size) * direct, center[1] - int(92 * size)), int(3 * size))
     pygame.draw.circle(screen, (255, 255, 255),
                        (center[0] - int(11 * size) * direct, center[1] - int(93 * size)), int(4 * size))
     myellipse((center[0] + int(7 * size) * direct, center[1] - int(80 * size)), (0, 0, 0), int(2 * size), int(4 * size))
@@ -98,7 +98,7 @@ def Alien(size: float, center: list, direct: int):
     leaf = pygame.Surface((40 * size, 40 * size), pygame.SRCALPHA)
     pygame.draw.ellipse(leaf, (130, 160, 0), (0, 0, int(20 * size), (10 * size)))
     leaf = pygame.transform.rotate(leaf, -30 * direct)
-    screen.blit(leaf, (center[0] + int((80 - 5 * direct) * size) * direct, center[1] - int((77 - 7 * direct * size))))
+    screen.blit(leaf, (center[0] + int((80 - 5 * direct) * size) * direct, center[1] - int((77 - 7 * direct) * size)))
     for center, a, b in leftleg:
         myellipse(center, (221, 233, 175), a, b)
     for center, a, b in rightleg:
@@ -122,6 +122,9 @@ screenhight = 1123
 lightclouds = [(-600, 20, 400, 220), (500, -25, 1100, 95), (350, 130, 1050, 270),
                (250, 300, 950, 450), (-150, 250, 530, 400)]
 darkclouds = [(120, 80, 980, 200), (-333, 200, 333, 360), (169, 380, 835, 530)]
+UFOs_coordinates = [(0.8, (180, 450)), (0.3, (370, 550)), (0.5, (600, 450))]
+ALIENs_coordinates = [(0.9, (560, 750), 1), (0.5, (75, 720), -1), (0.3, (200, 650), -1),
+                      (0.4, (300, 710), 1), (0.6, (230, 870), -1)]
 
 # screens
 screen = pygame.display.set_mode((screenwidth, screenhight))
@@ -148,10 +151,12 @@ raw_clouds = img.tobytes("raw", 'RGBA')
 surf_clouds = pygame.image.fromstring(raw_clouds, (screenwidth, screenhight), 'RGBA')
 screen.blit(surf_clouds, (0, 0))
 # UFO
-UFO(1, (180, 450))
+for size, center in UFOs_coordinates:
+    UFO(size, center)
 
 # Alien
-Alien(1, (550, 800), 1)
+for size, center, direction in ALIENs_coordinates:
+    Alien(size, center, direction)
 
 pygame.display.update()
 pygame.image.save(screen, 'file2_result.png')
