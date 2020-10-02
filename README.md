@@ -1,4 +1,3 @@
 # kondratenko_lab_3_1
-hello world
-my english is bad
-
+picture initial 98fcf0b4eca5770ebdaae53a4d1bec7e85da8b23
+picture upgrade 001a3f8ce306e1700c9b09976750cf3b41790604
