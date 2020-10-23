@@ -9,7 +9,9 @@ GH.screen.blit(GH.surface_end,
 GH.screen.blit(GH.start_text, GH.start_textRect)
 pygame.display.update()
 
-
+pygame.mixer.init()
+pygame.mixer.music.load("Lygushka_sound.mp3")
+pygame.mixer.music.set_volume(1.0)
 # игровой цикл
 while not GH.finished:
     GH.clock.tick(GH.FPS)
@@ -44,6 +46,7 @@ while not GH.finished:
     if GH.frog_killed:
         del GH.pool[:]
         GH.screen.fill(GH.BLACK)
+        pygame.mixer.music.play()
         GH.screen.blit(GH.Lygushka, GH.LygushkaRect)
         GH.pause = True
         pygame.display.update()
@@ -109,6 +112,7 @@ while not GH.finished:
                     GH.screen.blit(text, textRect)
 
 pygame.font.quit
+pygame.mixer.quit()
 pygame.quit()
 
 
