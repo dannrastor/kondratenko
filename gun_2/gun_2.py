@@ -19,9 +19,11 @@ def rand_color():
 
 class Bullet:
 
-    def __init__(self, coord, velocity, angle, R = 20, g=-1, color=RED):
+    def __init__(self, coord, velocity, angle, R = 20, g=-1):
         self.coord = coord
-        color = RED
+        # if color == None:
+        #     color = rand_color()
+        color = WHITE
         self.color = color
         self.V = [velocity * numpy.cos(angle),
                   velocity * numpy.sin(angle)]
@@ -58,12 +60,13 @@ class Gun:
 
     def __init__(self, coord=[screen_size[0] // 2, screen_size[1] - 20],
                  charge=5, step=2, angle=0, max_power=50, min_power=10,
-                 color=RED, velocity=10, size=15):
+                 color=RED, back_color = WHITE, velocity=10, size=15, R=20):
         self.coord = coord
         self.angle = angle
         self.max_power = max_power
         self.min_power = min_power
         self.color = color
+        self.back_color = back_color
         self.active = False
         self.power = min_power
         self.charge = charge
@@ -71,6 +74,8 @@ class Gun:
         self.step = step
         self.min_size = size
         self.size = size
+        self.R = R
+        self.start_coord = coord
 
     def activate(self):
         self.active = True
@@ -82,8 +87,8 @@ class Gun:
     def charging(self):
         if self.active and self.power < self.max_power:
             self.power += self.charge
-            self.coord[0] += self.step
-            self.size += self.step
+            # self.coord[0] += self.step
+            # self.size += self.step
 
     def fire(self):
         bullet = Bullet(self.coord, self.power, self.angle)
@@ -91,6 +96,16 @@ class Gun:
         self.active = False
         self.size = self.min_size
         return bullet
+
+    def move_0(self, inc):
+        if (self.coord[1] > 30 or inc > 0) \
+                and (self.coord[0] < screen_size[0] - 30 or inc < 0):
+            self.coord[0] += inc
+
+    def move_1(self, inc):
+        if (self.coord[1] > 30 or inc > 0) \
+                and (self.coord[1] < screen_size[1] - 30 or inc < 0):
+            self.coord[1] += inc
 
     def draw(self, screen):
         gun_shape = []
@@ -104,6 +119,14 @@ class Gun:
         gun_shape.append((gun_pos + vec_2 - vec_1).tolist())
         gun_shape.append((gun_pos - vec_1).tolist())
         pygame.draw.polygon(screen, self.color, gun_shape)
+        pygame.draw.circle(screen, self.back_color, self.coord, self.R)
+
+
+    def alt_charging(self):
+        if self.active and self.power < self.max_power:
+            self.power += self.charge
+            self.coord
+
 
 
 
@@ -220,11 +243,10 @@ class ScoreTable:
 
 
 class GameManager:
-    def __init__(self, n_targets=1):
+    def __init__(self, n_targets):
         self.balls = []
         self.gun = Gun()
         self.targets = []
-        self.targets_2 = []
         self.score_t = ScoreTable()
         self.n_targets = n_targets
         self.new_mission()
@@ -264,12 +286,21 @@ class GameManager:
                 done = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    self.gun.move(-5)
+                    self.gun.move_1(-5)
                 elif event.key == pygame.K_DOWN:
-                    self.gun.move(5)
+                    self.gun.move_1(5)
+                elif event.key == pygame.K_LEFT:
+                    self.gun.move_0(-5)
+                elif event.key == pygame.K_RIGHT:
+                    self.gun.move_0(5)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if (event.button == 1 and len(self.balls) == 0):
-                    self.gun.activate()
+                    activator = True
+                    for ball in self.balls:
+                        if ball.life:
+                           activator = False
+                    if activator:
+                        self.gun.activate()
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     self.balls.append(self.gun.fire())
